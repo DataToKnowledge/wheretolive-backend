@@ -10,6 +10,12 @@ lazy val root = (project in file(".")).aggregate(konsumer).
     name := "WhereToLive Backend"
   )
 
+lazy val entities = (project in file("./entities")).
+  settings(commons: _*).
+  settings(
+    name := "Entities"
+  )
+
 lazy val konsumer = (project in file("./konsumer")).
   settings(commons: _*).
   settings(
@@ -28,4 +34,5 @@ lazy val konsumer = (project in file("./konsumer")).
   settings(
     runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in (Compile, run)),
     run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run))
-  )
+  ).
+  dependsOn(entities)
