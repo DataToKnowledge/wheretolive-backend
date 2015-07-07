@@ -1,7 +1,7 @@
 lazy val commons = Seq(
   organization := "it.dtk",
   version := "0.1.0",
-  scalaVersion := "2.11.6"
+  scalaVersion := "2.10.5"
 )
 
 lazy val testLibrary = Seq (
@@ -38,14 +38,28 @@ lazy val konsumer = (project in file("./konsumer")).
     libraryDependencies ++= commonDependencies ++ Seq (
       "org.apache.spark" %% "spark-core" % "1.4.0" % "provided",
 
-      "org.apache.spark" %% "spark-streaming" % "1.4.0",
-      "org.apache.spark" %% "spark-streaming-kafka" % "1.4.0",
+      "org.apache.spark" %% "spark-streaming" % "1.4.0" % "provided",
+      "org.apache.spark" %% "spark-streaming-kafka" % "1.4.0"
+        exclude("commons-beanutils", "commons-beanutils")
+        exclude("commons-collections", "commons-collections")
+        exclude("com.esotericsoftware.minlog", "minlog"),
 
-      "org.apache.kafka" % "kafka-clients" % "0.8.2.1"
+      "org.apache.kafka" % "kafka-clients" % "0.8.2.1",
+      "org.elasticsearch" %% "elasticsearch-spark" % "2.1.0"
     )
   ).
   settings(
+    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
     runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in (Compile, run)),
     run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run))
+  ).
+  settings(
+    assemblyMergeStrategy in assembly := {
+      case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
+      case m if m.startsWith("META-INF") => MergeStrategy.discard
+      case "about.html"  => MergeStrategy.rename
+      case "reference.conf" => MergeStrategy.concat
+      case _ => MergeStrategy.first
+    }
   ).
   dependsOn(entities)
