@@ -1,7 +1,8 @@
 lazy val commons = Seq(
   organization := "it.dtk",
   version := "0.1.0",
-  scalaVersion := "2.10.5"
+  scalaVersion := "2.10.5",
+  scalacOptions += "-target:jvm-1.7"
 )
 
 lazy val testLibrary = Seq (

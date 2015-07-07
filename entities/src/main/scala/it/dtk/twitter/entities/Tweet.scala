@@ -1,6 +1,6 @@
 package it.dtk.twitter.entities
 
-import java.time.ZonedDateTime
+import java.util.Date
 
 /**
  * Created by gigitsu on 24/06/15.
@@ -13,7 +13,7 @@ case class Tweet(id:             String,
                  place:          Option[Place],
                  hashtags:       Seq[String],
                  truncated:      Boolean,
-                 createdAt:      ZonedDateTime,
+                 createdAt:      Date,
                  coordinates:    Option[Geometry],
                  userMentions:   Map[String, String],
                  retweetCount:   Long,

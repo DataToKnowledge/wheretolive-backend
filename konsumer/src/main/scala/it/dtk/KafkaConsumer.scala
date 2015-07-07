@@ -19,14 +19,15 @@ object KafkaConsumer {
     val conf = new SparkConf().setAppName("kafka-consumer")
     conf.set("es.index.auto.create", "true")
     conf.set("es.resource", "twitter/tweet")
-    conf.set("es.net.http.auth.user", "user")
-    conf.set("es.net.http.auth.pass", "pass")
+    conf.set("es.net.http.auth.user", "wheretolive")
+    conf.set("es.net.http.auth.pass", "NothingToMoney")
+    conf.set("es.nodes", "http://backend-0.cloudapp.net:9200,http://backend-1.cloudapp.net:9200,http://backend-2.cloudapp.net:9200,http://backend-3.cloudapp.net:9200")
 
     val ssc = new StreamingContext(conf, Seconds(2))
     ssc.checkpoint("checkpoint")
 
     val topics = List("twitter").map((_,1)).toMap
-    KafkaUtils.createStream(ssc, "zookeeper-quorum", "kafka-tweets-consumer", topics)
+    KafkaUtils.createStream(ssc, "backend-1.cloudapp.net:2181", "kafka-tweets-consumer", topics)
       .map(_._2)
       .flatMap(_.split("\\r?\\n"))
       .map(_.parseJson.convertTo[Tweet])

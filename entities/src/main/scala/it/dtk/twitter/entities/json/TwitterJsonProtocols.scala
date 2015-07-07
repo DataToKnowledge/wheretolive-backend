@@ -1,8 +1,7 @@
 package it.dtk.twitter.entities.json
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.{TimeZone, Locale, Date}
+import java.text.SimpleDateFormat
 
 import it.dtk.twitter.entities._
 import spray.json._
@@ -82,15 +81,16 @@ trait TwitterJsonProtocols extends DefaultJsonProtocol {
     }
   }
 
-  implicit object LocalDateTimeFormat extends JsonFormat[ZonedDateTime] {
-    val twitterFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH)
+  implicit object LocalDateTimeFormat extends JsonFormat[Date] {
+    val twitterFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH)
+    twitterFormatter.setTimeZone(TimeZone.getTimeZone("Z"))
 
-    override def read(json: JsValue): ZonedDateTime = json match {
-      case JsString(s) => ZonedDateTime.parse(s, twitterFormatter)
+    override def read(json: JsValue): Date = json match {
+      case JsString(s) => twitterFormatter.parse(s)
       case x => deserializationError("Expected ZoneDateTime as JsString, but got " + x)
     }
 
-    override def write(obj: ZonedDateTime): JsValue = JsString(obj.format(twitterFormatter))
+    override def write(obj: Date): JsValue = JsString(twitterFormatter.format(obj))
   }
 
   implicit object PlaceFormat extends JsonFormat[Place] {
@@ -168,7 +168,7 @@ trait TwitterJsonProtocols extends DefaultJsonProtocol {
         place         = fromField[Option[Place]](json, "place"),
         hashtags      = fromField[JsArray](entities, "hashtags").elements.map(fromField[String](_, "text")),
         truncated     = fromField[Boolean](json, "truncated"),
-        createdAt     = fromField[ZonedDateTime](json, "created_at"),
+        createdAt     = fromField[Date](json, "created_at"),
         coordinates   = fromField[Option[Geometry]](json, "coordinates"),
         userMentions  = fromField[JsArray](entities, "user_mentions").elements.map(um => fromField[String](um,"id_str") -> fromField[String](um,"name")).toMap,
         retweetCount  = fromField[Long](json, "retweet_count"),

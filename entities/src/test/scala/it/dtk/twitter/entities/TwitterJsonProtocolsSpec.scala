@@ -1,6 +1,6 @@
 package it.dtk.twitter.entities
 
-import java.time.{DayOfWeek, Month, ZoneId, ZonedDateTime}
+import java.util.{Date, Calendar,TimeZone}
 
 import org.scalatest._
 import spray.json._
@@ -14,22 +14,23 @@ class TwitterJsonProtocolsSpec extends FlatSpec {
 
   "A zoned date time field" should "be correctly parsed" in {
     val json = JsString("Wed Aug 27 13:08:45 +0000 2008")
-    val dt = json.convertTo[ZonedDateTime]
+    val cal = Calendar.getInstance(TimeZone.getTimeZone("Z"))
+    cal.setTime(json.convertTo[Date])
 
-    assert(dt.getDayOfWeek == DayOfWeek.WEDNESDAY)
-    assert(dt.getMonth == Month.AUGUST)
-    assert(dt.getYear == 2008)
-    assert(dt.getDayOfMonth == 27)
+    assert(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+    assert(cal.get(Calendar.MONTH) == Calendar.AUGUST)
+    assert(cal.get(Calendar.YEAR) == 2008)
+    assert(cal.get(Calendar.DAY_OF_MONTH) == 27)
 
-    assert(dt.getHour == 13)
-    assert(dt.getMinute == 8)
-    assert(dt.getSecond == 45)
+    assert(cal.get(Calendar.HOUR_OF_DAY) == 13)
+    assert(cal.get(Calendar.MINUTE) == 8)
+    assert(cal.get(Calendar.SECOND) == 45)
 
-    assert(dt.getZone == ZoneId.of("Z"))
+    assert(cal.get(Calendar.ZONE_OFFSET) == 0)
   }
   it should "be formatted to twitter format as well" in {
     val json = JsString("Wed Aug 27 13:08:45 +0000 2008")
-    val dt = json.convertTo[ZonedDateTime]
+    val dt = json.convertTo[Date]
     val newJson = dt.toJson
 
     assert(newJson == json)
@@ -222,15 +223,17 @@ class TwitterJsonProtocolsSpec extends FlatSpec {
   "A tweet object" should "be correctly parsed" in {
     val json = """{"created_at":"Tue Jun 16 14:35:03 +0000 2015","id":610817868918325248,"id_str":"610817868918325248","text":"RT @TheScript_Danny: @yustisiadentia just watching on the news , a balcony collapsed at a 21st birthday heartbreaking","source":"\u003ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003eTwitter for iPhone\u003c\/a\u003e","truncated":false,"in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":null,"in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"user":{"id":179211291,"id_str":"179211291","name":"Dan:)","screen_name":"katieanddannny","location":"Ireland","url":null,"description":"Danny O'Donoghue is my favourite person xx Snapchat - katieanddanny Love Tan&Jim","protected":false,"verified":false,"followers_count":2040,"friends_count":1951,"listed_count":9,"favourites_count":5406,"statuses_count":10040,"created_at":"Mon Aug 16 19:44:40 +0000 2010","utc_offset":3600,"time_zone":"Casablanca","geo_enabled":true,"lang":"en","contributors_enabled":false,"is_translator":false,"profile_background_color":"0099B9","profile_background_image_url":"http:\/\/pbs.twimg.com\/profile_background_images\/837162092\/395ba21053a5c07c1e6386a938819349.png","profile_background_image_url_https":"https:\/\/pbs.twimg.com\/profile_background_images\/837162092\/395ba21053a5c07c1e6386a938819349.png","profile_background_tile":true,"profile_link_color":"0099B9","profile_sidebar_border_color":"FFFFFF","profile_sidebar_fill_color":"95E8EC","profile_text_color":"3C3940","profile_use_background_image":true,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/610219492887674881\/Bw_aidTE_normal.jpg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/610219492887674881\/Bw_aidTE_normal.jpg","profile_banner_url":"https:\/\/pbs.twimg.com\/profile_banners\/179211291\/1432755561","default_profile":false,"default_profile_image":false,"following":null,"follow_request_sent":null,"notifications":null},"geo":null,"coordinates":null,"place":null,"contributors":null,"retweeted_status":{"created_at":"Tue Jun 16 14:23:29 +0000 2015","id":610814959602245633,"id_str":"610814959602245633","text":"@yustisiadentia just watching on the news , a balcony collapsed at a 21st birthday heartbreaking","source":"\u003ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003eTwitter for iPhone\u003c\/a\u003e","truncated":false,"in_reply_to_status_id":610810276942905344,"in_reply_to_status_id_str":"610810276942905344","in_reply_to_user_id":45771160,"in_reply_to_user_id_str":"45771160","in_reply_to_screen_name":"yustisiadentia","user":{"id":498716358,"id_str":"498716358","name":"Danny O'Donoghue","screen_name":"TheScript_Danny","location":"","url":"http:\/\/thescriptmusic.com","description":"Download No Sound Without Silence: @Itunes: http:\/\/smarturl.it\/NSWSDigi Listen on @Spotify: http:\/\/smarturl.it\/TheScriptSptfy","protected":false,"verified":true,"followers_count":1134594,"friends_count":3868,"listed_count":1493,"favourites_count":1521,"statuses_count":4026,"created_at":"Tue Feb 21 10:32:57 +0000 2012","utc_offset":3600,"time_zone":"Casablanca","geo_enabled":true,"lang":"en","contributors_enabled":false,"is_translator":false,"profile_background_color":"050505","profile_background_image_url":"http:\/\/pbs.twimg.com\/profile_background_images\/433310182\/Twitter_background_copy.jpg","profile_background_image_url_https":"https:\/\/pbs.twimg.com\/profile_background_images\/433310182\/Twitter_background_copy.jpg","profile_background_tile":false,"profile_link_color":"050505","profile_sidebar_border_color":"FFFFFF","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":false,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/430055732260913152\/bwpeT1Wp_normal.jpeg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/430055732260913152\/bwpeT1Wp_normal.jpeg","profile_banner_url":"https:\/\/pbs.twimg.com\/profile_banners\/498716358\/1405702112","default_profile":false,"default_profile_image":false,"following":null,"follow_request_sent":null,"notifications":null},"geo":null,"coordinates":null,"place":null,"contributors":null,"retweet_count":11,"favorite_count":23,"entities":{"hashtags":[{"indices":[32,36],"text":"lol"}],"trends":[],"urls":[{"indices":[32,52], "url":"http:\/\/t.co\/IOwBrTZR", "display_url":"youtube.com\/watch?v=oHg5SJ\u2026", "expanded_url":"http:\/\/www.youtube.com\/watch?v=oHg5SJYRHA0"}],"user_mentions":[{"screen_name":"yustisiadentia","name":"Dentia Yustisia","id":45771160,"id_str":"45771160","indices":[0,15]}],"symbols":[]},"favorited":false,"retweeted":false,"possibly_sensitive":false,"filter_level":"low","lang":"en"},"retweet_count":0,"favorite_count":0,"entities":{"hashtags":[{"indices":[32,36],"text":"lol"}],"trends":[],"urls":[{"indices":[32,52], "url":"http:\/\/t.co\/IOwBrTZR", "display_url":"youtube.com\/watch?v=oHg5SJ\u2026", "expanded_url":"http:\/\/www.youtube.com\/watch?v=oHg5SJYRHA0"}],"user_mentions":[{"screen_name":"TheScript_Danny","name":"Danny O'Donoghue","id":498716358,"id_str":"498716358","indices":[3,19]},{"screen_name":"yustisiadentia","name":"Dentia Yustisia","id":45771160,"id_str":"45771160","indices":[21,36]}],"symbols":[]},"favorited":false,"retweeted":false,"possibly_sensitive":false,"filter_level":"low","lang":"en","timestamp_ms":"1434465303054"}""".parseJson
     val t = json.convertTo[Tweet]
+    val cal = Calendar.getInstance(TimeZone.getTimeZone("Z"))
+    cal.setTime(t.createdAt)
 
-    assert(t.createdAt.getHour == 14)
-    assert(t.createdAt.getMinute == 35)
-    assert(t.createdAt.getSecond == 3)
-    assert(t.createdAt.getYear == 2015)
-    assert(t.createdAt.getMonth == Month.JUNE)
-    assert(t.createdAt.getDayOfMonth == 16)
-    assert(t.createdAt.getDayOfWeek == DayOfWeek.TUESDAY)
-    assert(t.createdAt.getZone == ZoneId.of("Z"))
+    assert(cal.get(Calendar.HOUR_OF_DAY) == 14)
+    assert(cal.get(Calendar.MINUTE) == 35)
+    assert(cal.get(Calendar.SECOND) == 3)
+    assert(cal.get(Calendar.YEAR) == 2015)
+    assert(cal.get(Calendar.MONTH) == Calendar.JUNE)
+    assert(cal.get(Calendar.DAY_OF_MONTH) == 16)
+    assert(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+    assert(cal.get(Calendar.ZONE_OFFSET) == 0)
     assert(t.id == "610817868918325248")
     assert(t.user.id == "179211291")
     assert(t.lang.isDefined && t.lang.get == 'en)
