@@ -45,6 +45,7 @@ lazy val konsumer = (project in file("./konsumer")).
         exclude("commons-collections", "commons-collections")
         exclude("com.esotericsoftware.minlog", "minlog"),
 
+      "com.typesafe" % "config" % "1.3.0",
       "org.apache.kafka" % "kafka-clients" % "0.8.2.1",
       "org.elasticsearch" %% "elasticsearch-spark" % "2.1.0"
     )
